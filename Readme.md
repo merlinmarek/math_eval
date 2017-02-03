@@ -1,5 +1,7 @@
 Simple evaluation of mathematical expressions in infix notation using the shunting-yard algorithm.
 
+Negative numbers have to be in parantheses like (-number).
+
 build with:
 ```
 mkdir build

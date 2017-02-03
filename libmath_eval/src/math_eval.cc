@@ -89,6 +89,21 @@ std::queue<Token> tokenize_string(std::string str)
                 tokens.emplace(token);
                 token.value = "";
             }
+            if(type == TokenType::OPERATOR)
+            {
+                if(token.value == "-" && tokens.back().value == "(") // for negative number support
+                {
+                    // negative numbers are not possible at the moment so make (-n) -> (0-n)
+                    token.value = "0";
+                    token.type = TokenType::NUMBER;
+                    tokens.emplace(token);
+
+                    token.value = "-";
+                    token.type = TokenType::OPERATOR;
+                }
+                tokens.emplace(token);
+                token.value = "";
+            }
         }
     }
     if(token.value != "")

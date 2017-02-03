@@ -1,2 +1,3 @@
-add_executable(demo main.cc)
-target_link_libraries(demo LINK_PUBLIC math_eval)
+add_executable(demo src/demo.cc)
+
+target_link_libraries(demo math_eval)

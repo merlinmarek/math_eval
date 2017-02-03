@@ -1,4 +1,4 @@
-Simple evaluation of mathematical expressions using the shunting-yard algorithm.
+Simple evaluation of mathematical expressions in infix notation using the shunting-yard algorithm.
 
 build with:
 ```
@@ -11,7 +11,7 @@ make install
 
 After that you can include math_eval.h and link with -lmath_eval.
 
-Example:
+Example
 
 ```
 #include <iostream>
@@ -32,8 +32,20 @@ int main(int argc, char** argv)
 }
 ```
 
-Be sure to compile with c++11 support like:
+Be sure to compile with c++11 support like
 
 ```
 g++ -std=c++11 demo.cc -lmath_eval
+```
+
+If you are using cmake to build your project you can use
+
+```
+find_package(MathEval)
+
+.
+.
+.
+
+target_link_libraries(YourProject math_eval)
 ```

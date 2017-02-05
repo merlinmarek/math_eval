@@ -166,9 +166,9 @@ std::queue<Token> infix_to_postfix(std::string infix_string)
                         queue.push(stack.top());
                         stack.pop();
                     }
-                    if(stack.top().value != "(")
+                    if(!stack.size() || stack.top().value != "(")
                     {
-                        //BAD INPUT -> NO MATCHING PARENTHESIS
+                        throw std::invalid_argument("missing parantheses in expression");
                     }
                     else
                     {
@@ -213,6 +213,10 @@ float math_eval(std::queue<Token> postfix_tokens)
         }
         else if(token.type == TokenType::OPERATOR)
         {
+            if(operands.size() < 2)
+            {
+                throw std::invalid_argument(std::string("found operator ") + token.value + std::string(" with less than 2 operands on the stack"));
+            }
             auto op2 = operands.top();
             operands.pop();
             auto op1 = operands.top();
@@ -231,6 +235,10 @@ float math_eval(std::queue<Token> postfix_tokens)
         }
         else if(token.type == TokenType::FUNCTION)
         {
+            if(operands.size() == 0)
+            {
+                throw std::invalid_argument(std::string("found function ") +  token.value + std::string(" with 0 operands on the stack"));
+            }
             auto op = operands.top();
             operands.pop();
             auto func = functions.find(token.value);
@@ -238,27 +246,15 @@ float math_eval(std::queue<Token> postfix_tokens)
             {
                 operands.push(func->second(op));
             }
+            else
+            {
+                throw std::invalid_argument(std::string("unkown function ") + token.value);
+            }
         }
-        else //ERROR
+        else
         {
-
+            throw std::invalid_argument(std::string("found invalid token with value ") + token.value + std::string(" in queue"));
         }
     }
     return operands.size() ? operands.top() : 0.0f;
 }
-//int main(int argc, char** argv)
-//{
-//    std::string infix_string(argv[1]);
-//    std::cout << "infix string\t" << infix_string << std::endl;
-//    //std::string postfix_string = infix_to_postfix(infix_string);
-//    auto postfix_tokens = infix_to_postfix(infix_string);
-//    //std::string postfix_string = "";
-//    //while(postfix_tokens.size())
-//    //{
-//    //    postfix_string += postfix_tokens.front().value;
-//    //    postfix_tokens.pop();
-//    //}
-//    //std::cout << "postfix string\t" <<  postfix_string << std::endl;
-//    std::cout << "math_eval\t" << math_eval(postfix_tokens) << std::endl;
-//    return 0;
-//}

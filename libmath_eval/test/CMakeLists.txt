@@ -1,4 +1,9 @@
+add_executable(bad_input bad_input.cc)
 add_executable(correct_expression correct_expression.cc)
+
+target_link_libraries(bad_input math_eval)
+target_link_libraries(bad_input gtest_main)
+add_test(NAME bad_input_test COMMAND bad_input)
 
 target_link_libraries(correct_expression math_eval)
 target_link_libraries(correct_expression gtest_main)

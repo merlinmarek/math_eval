@@ -1,0 +1,5 @@
+add_executable(correct_expression correct_expression.cc)
+
+target_link_libraries(correct_expression math_eval)
+target_link_libraries(correct_expression gtest_main)
+add_test(NAME correct_expression_test COMMAND correct_expression)

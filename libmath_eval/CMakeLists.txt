@@ -20,4 +20,4 @@ install(EXPORT MathEvalConfig DESTINATION share/MathEval/cmake)
 
 export(TARGETS math_eval FILE MathEvalConfig.cmake)
 
-#install(TARGETS math_eval DESTINATION lib)
+add_subdirectory(test)

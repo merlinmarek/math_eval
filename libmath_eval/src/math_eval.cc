@@ -31,9 +31,9 @@ std::map<std::string, std::function<float(float)>> functions = {
     {"fabs", (float(*)(float))std::fabs},
 }; 
 
-std::queue<Token> tokenize_string(std::string str)
+std::deque<Token> tokenize_string(std::string str)
 {
-    std::queue<Token> tokens;
+    std::deque<Token> tokens;
     Token token;
     for(char c : str)
     {
@@ -76,7 +76,7 @@ std::queue<Token> tokenize_string(std::string str)
             }
             else
             {
-               tokens.emplace(token); 
+               tokens.emplace_back(token); 
                token.value = "";
             }
         }
@@ -86,49 +86,57 @@ std::queue<Token> tokenize_string(std::string str)
             token.type = type;
             if(type == TokenType::BRACE)
             {
-                tokens.emplace(token);
+                tokens.emplace_back(token);
                 token.value = "";
             }
             if(type == TokenType::OPERATOR)
             {
-                if(token.value == "-" && tokens.back().value == "(") // for negative number support
+                if(token.value == "-" && (!tokens.size() || tokens.back().value == "(")) // for negative number support
                 {
                     // negative numbers are not possible at the moment so make (-n) -> (0-n)
                     token.value = "0";
                     token.type = TokenType::NUMBER;
-                    tokens.emplace(token);
+                    tokens.emplace_back(token);
 
                     token.value = "-";
                     token.type = TokenType::OPERATOR;
                 }
-                tokens.emplace(token);
+                tokens.emplace_back(token);
                 token.value = "";
             }
         }
     }
     if(token.value != "")
-        tokens.emplace(token);
+        tokens.emplace_back(token);
     return tokens;
 }
 
-std::queue<Token> infix_to_postfix(std::string infix_string)
+std::deque<Token> infix_to_postfix(std::string infix_string)
 {
     auto end_pos = std::remove(infix_string.begin(), infix_string.end(), ' ');
     infix_string.erase(end_pos, infix_string.end());
 
-    std::queue<Token> tokens = tokenize_string(infix_string);
+    std::deque<Token> tokens = tokenize_string(infix_string);
+
+    int left_braces = std::count_if(tokens.begin(), tokens.end(), [](Token token){ return token.value == "(";});
+    int right_braces = std::count_if(tokens.begin(), tokens.end(), [](Token token){ return token.value == ")";});
+
+    if(left_braces != right_braces)
+    {
+        throw std::invalid_argument("missing parantheses in expression");
+    }
 
     std::stack<Token> stack;
-    std::queue<Token> queue;
+    std::deque<Token> deque;
 
     while(tokens.size())
     {
         auto token = tokens.front();
-        tokens.pop();
+        tokens.pop_front();
         switch(token.type)
         {
             case TokenType::NUMBER:
-                queue.push(token);
+                deque.push_back(token);
                 break;
             case TokenType::FUNCTION:
                 stack.push(token);
@@ -144,7 +152,7 @@ std::queue<Token> infix_to_postfix(std::string infix_string)
                     if((a_1 == Association::LEFT && p_1 <= p_2) ||
                         (a_1 == Association::RIGHT && p_1 < p_2))
                     {
-                        queue.push(stack.top());
+                        deque.push_back(stack.top());
                         stack.pop();
                     }
                     else
@@ -163,7 +171,7 @@ std::queue<Token> infix_to_postfix(std::string infix_string)
                 {
                     while(stack.size() && stack.top().value != "(")
                     {
-                        queue.push(stack.top());
+                        deque.push_back(stack.top());
                         stack.pop();
                     }
                     if(!stack.size() || stack.top().value != "(")
@@ -175,7 +183,7 @@ std::queue<Token> infix_to_postfix(std::string infix_string)
                         stack.pop();
                         if(stack.size() && stack.top().type == TokenType::FUNCTION)
                         {
-                            queue.push(stack.top());
+                            deque.push_back(stack.top());
                             stack.pop();
                         }
                     }
@@ -188,7 +196,7 @@ std::queue<Token> infix_to_postfix(std::string infix_string)
     {
         if(stack.top().type == TokenType::OPERATOR)
         {
-            queue.push(stack.top());
+            deque.push_back(stack.top());
             stack.pop();
         }
         else
@@ -197,16 +205,16 @@ std::queue<Token> infix_to_postfix(std::string infix_string)
             break;
         }
     }
-    return queue;
+    return deque;
 }
 
-float math_eval(std::queue<Token> postfix_tokens)
+float math_eval(std::deque<Token> postfix_tokens)
 {
     std::stack<float> operands;
     while(postfix_tokens.size())
     {
         auto token = postfix_tokens.front();
-        postfix_tokens.pop();
+        postfix_tokens.pop_front();
         if(token.type == TokenType::NUMBER)
         {
             operands.push(std::stof(token.value));
@@ -253,7 +261,7 @@ float math_eval(std::queue<Token> postfix_tokens)
         }
         else
         {
-            throw std::invalid_argument(std::string("found invalid token with value ") + token.value + std::string(" in queue"));
+            throw std::invalid_argument(std::string("found invalid token with value ") + token.value + std::string(" in deque"));
         }
     }
     return operands.size() ? operands.top() : 0.0f;

@@ -54,21 +54,21 @@ target_link_libraries(YourProject math_eval)
 
 Supported functions:
 
--sin
--cos
--tan
--asin
--acos
--atan
--sinh
--cosh
--tanh
--asinh
--acosh
--atanh
--log
--log10
--exp
--sqrt
--cbrt
--fabs
+- sin
+- cos
+- tan
+- asin
+- acos
+- atan
+- sinh
+- cosh
+- tanh
+- asinh
+- acosh
+- atanh
+- log
+- log10
+- exp
+- sqrt
+- cbrt
+- fabs

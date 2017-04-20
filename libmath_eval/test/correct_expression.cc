@@ -19,10 +19,18 @@ TEST(evaluation_test, leading_minus)
 
 TEST(evaluation_test, complex_expression_1)
 {
+    // sqrt and exp are tested
     EXPECT_NEAR(math_eval(infix_to_postfix("4 * (9 + sqrt(exp(5) + 4))")), 85.3823, 0.0001);
 }
 
 TEST(evaluation_test, complex_expression_2)
 {
+    // sqrt, sin and log are tested
     EXPECT_NEAR(math_eval(infix_to_postfix("sqrt(sin(log(14)))")), 0.694009, 0.0001);
+}
+
+TEST(evaluation_test, complex_expression_3)
+{
+    // cos, tan and asin are tested 
+    EXPECT_NEAR(math_eval(infix_to_postfix("asin(tan(cos(1.4)))")), 0.172477, 0.0001);
 }

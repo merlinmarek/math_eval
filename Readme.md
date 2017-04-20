@@ -67,7 +67,6 @@ Supported functions:
 - acosh
 - atanh
 - log
-- log10
 - exp
 - sqrt
 - cbrt

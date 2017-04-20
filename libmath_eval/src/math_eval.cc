@@ -24,7 +24,6 @@ std::map<std::string, std::function<float(float)>> functions = {
     {"acosh", (float(*)(float))std::acosh},
     {"atanh", (float(*)(float))std::atanh},
     {"log", (float(*)(float))std::log},
-    {"log10", (float(*)(float))std::log10},
     {"exp", (float(*)(float))std::exp},
     {"sqrt", (float(*)(float))std::sqrt},
     {"cbrt", (float(*)(float))std::cbrt},
